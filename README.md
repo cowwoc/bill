@@ -1,4 +1,4 @@
-# Bill
+# <img src="docs/logo.svg" alt="Bill Logo" height="48" align="top"/> Bill
 
 A modern build system for Java with Cargo-inspired simplicity.
 
