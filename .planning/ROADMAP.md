@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Goal**: Bootstrap project with Maven, establish module structure, basic project skeleton
 **Depends on**: Nothing (first phase)
 **Research**: Unlikely (standard Maven project setup)
-**Plans**: TBD
+**Plans**: In progress (1 completed)
 
 ### Phase 2: TOML Parser
 **Goal**: Parse bill.toml files into configuration model
@@ -101,7 +101,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/? | Not started | - |
+| 1. Foundation | 1/? | In progress | - |
 | 2. TOML Parser | 0/? | Not started | - |
 | 3. Maven Client | 0/? | Not started | - |
 | 4. Dependency Resolution | 0/? | Not started | - |
