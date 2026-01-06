@@ -20,6 +20,7 @@
   <modules>
     <module>core</module>
     <module>toml</module>
+    <module>maven</module>
   </modules>
 
   <dependencyManagement>
