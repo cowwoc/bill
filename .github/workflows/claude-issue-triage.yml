@@ -1,0 +1,46 @@
+name: Claude Issue Triage
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  triage-issue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude Code for Issue Triage
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Analyze and triage this issue:
+
+            REPO: ${{ github.repository }}
+            ISSUE NUMBER: ${{ github.event.issue.number }}
+
+            Your task:
+            1. Read the issue content using GitHub CLI tools
+            2. Analyze the issue to determine its type and priority
+            3. Apply appropriate labels based on:
+               - Issue type: bug, feature, documentation, question, enhancement
+               - Priority: high, medium, low (based on impact and urgency)
+               - Component: core, toml, maven, build, dependencies
+
+            Use these GitHub CLI commands:
+            - `gh issue view ${{ github.event.issue.number }} --json title,body,author`
+            - `gh issue edit ${{ github.event.issue.number }} --add-label "label1,label2"`
+
+            Be professional and add labels that accurately reflect the issue content.
+
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_non_write_users: "cowwoc"
+          claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh issue edit:*),Bash(gh issue list:*)"'
