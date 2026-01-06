@@ -1,0 +1,41 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Retro pixel platypus - 8x8 pixel blocks -->
+  <defs>
+    <style>
+      .pixel { shape-rendering: crispEdges; }
+    </style>
+  </defs>
+
+  <!-- Body - Brown -->
+  <rect class="pixel" x="16" y="32" width="8" height="8" fill="#8B4513"/>
+  <rect class="pixel" x="24" y="32" width="8" height="8" fill="#8B4513"/>
+  <rect class="pixel" x="32" y="32" width="8" height="8" fill="#A0522D"/>
+
+  <!-- Head - Brown -->
+  <rect class="pixel" x="32" y="24" width="8" height="8" fill="#8B4513"/>
+
+  <!-- Duck bill - distinctive feature! -->
+  <rect class="pixel" x="40" y="24" width="8" height="4" fill="#DAA520"/>
+  <rect class="pixel" x="48" y="24" width="8" height="4" fill="#B8860B"/>
+  <rect class="pixel" x="40" y="28" width="8" height="4" fill="#B8860B"/>
+
+  <!-- Eye -->
+  <rect class="pixel" x="36" y="26" width="2" height="2" fill="#000000"/>
+
+  <!-- Front legs -->
+  <rect class="pixel" x="24" y="40" width="4" height="8" fill="#8B4513"/>
+  <rect class="pixel" x="32" y="40" width="4" height="8" fill="#8B4513"/>
+
+  <!-- Webbed feet -->
+  <rect class="pixel" x="22" y="48" width="8" height="2" fill="#DAA520"/>
+  <rect class="pixel" x="30" y="48" width="8" height="2" fill="#DAA520"/>
+
+  <!-- Beaver tail - distinctive! -->
+  <rect class="pixel" x="8" y="34" width="8" height="4" fill="#654321"/>
+  <rect class="pixel" x="4" y="36" width="12" height="2" fill="#5C4033"/>
+
+  <!-- Tail texture -->
+  <rect class="pixel" x="6" y="34" width="2" height="1" fill="#3E2723"/>
+  <rect class="pixel" x="10" y="35" width="2" height="1" fill="#3E2723"/>
+  <rect class="pixel" x="8" y="37" width="2" height="1" fill="#3E2723"/>
+</svg>
