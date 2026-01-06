@@ -221,6 +221,164 @@ Use full conventional commit types without scope identifiers.
 
 **Rationale:** Simpler format, easier to read in git log, consistent with project preferences.
 
+## Validation
+
+### Runtime Validation with requirements.java
+
+Use [requirements.java](https://github.com/cowwoc/requirements.java) (version 12.0) for all runtime validations instead of manual if/throw checks.
+
+**Import:**
+```java
+import static io.github.cowwoc.requirements12.java.DefaultJavaValidators.*;
+```
+
+**Dependency (defined in root pom.xml):**
+```xml
+<dependency>
+  <groupId>io.github.cowwoc.requirements</groupId>
+  <artifactId>requirements-java</artifactId>
+  <version>12.0</version>
+</dependency>
+```
+
+**Entry points:**
+- `requireThat(value, name)` - For method preconditions (throws IllegalArgumentException immediately)
+- `that(value, name)` - For assertions, class invariants, postconditions (throws AssertionError)
+- `checkIf(value, name)` - For collecting multiple failures (returns List<String> via elseGetFailures())
+
+**Use checkIf() for error accumulation:**
+```java
+// Accumulate all validation errors
+List<String> errors = checkIf(name, "project.name").isNotBlank()
+  .and(checkIf(version, "project.version").isNotBlank())
+  .and(checkIf(version, "project.version").matches(MAVEN_VERSION_PATTERN))
+  .elseGetFailures();
+
+if (!errors.isEmpty())
+{
+  throw new ConfigParseException("Invalid configuration", errors);
+}
+```
+
+**Common validation methods:**
+- Strings: `isNotBlank()`, `isNotEmpty()`, `matches(String regex)`, `matches(Pattern pattern)`, `isTrimmed()`
+- Objects: `isNotNull()`, `isEqualTo()`, `isInstanceOf()`
+- Collections: `isEmpty()`, `isNotEmpty()`, `size().*`
+- Numbers: `isPositive()`, `isNotNegative()`, `isGreaterThan()`, etc.
+
+**Rationale:** requirements.java provides automatic error message generation, fluent API for readability, and built-in error accumulation. It's more maintainable than manual if/throw checks and produces consistent, helpful error messages.
+
+### Test Assertions
+
+In test code, prefer requirements.java first, then fall back to TestNG assertions if functionality doesn't exist.
+
+**Prefer (requirements.java in tests):**
+```java
+requireThat(config.name(), "name").isEqualTo("my-app");
+requireThat(config.dependencies(), "dependencies").isNotEmpty();
+```
+
+**Fall back to TestNG if needed:**
+```java
+import static org.testng.Assert.*;
+assertEquals(config.name(), "my-app");
+assertNotNull(config.dependencies());
+```
+
+**Rationale:** Consistent validation style across production and test code. requirements.java provides better error messages than TestNG's assertEquals. Only use TestNG for features that requirements.java doesn't support.
+
+## Testing
+
+### Test-Driven Development (TDD)
+
+**Default approach:** Use TDD (Red-Green-Refactor) for all functionality implementation.
+
+**TDD Process:**
+1. **RED:** Write a failing test that specifies desired behavior
+2. **GREEN:** Write minimal code to make the test pass
+3. **REFACTOR:** Clean up code while keeping tests green
+
+**When to use TDD (default for most code):**
+- Business logic with defined inputs/outputs
+- Data transformations, parsing, formatting
+- Validation rules and constraints
+- Algorithms with testable behavior
+- API endpoints and public interfaces
+- State management and workflows
+
+**When TDD is optional:**
+- Simple data structures (POJOs, records with no logic)
+- Pure configuration (no behavior to test)
+- Trivial getters/setters
+- Generated code
+
+**Test Coverage Philosophy**
+
+Focus on **business requirements coverage**, not implementation-details coverage.
+
+**What to test (business requirements):**
+- "Given valid input, returns expected output"
+- "Given invalid input, reports clear error"
+- "Handles edge cases correctly (empty, null, boundary values)"
+- "Meets functional requirements from specification"
+
+**What NOT to test (implementation details):**
+- "Method X calls method Y"
+- "Uses library Z internally"
+- "Field A is set before field B"
+- "Code coverage percentage" (useful metric, but not the goal)
+
+**Good (requirements coverage):**
+```java
+// Tests business requirement: "Parser handles valid TOML"
+@Test
+public void parseValidBillToml()
+{
+  BillConfig config = parser.parse(validTomlPath);
+  requireThat(config.project().name(), "name").isEqualTo("my-app");
+  requireThat(config.project().version(), "version").isEqualTo("1.0.0");
+}
+
+// Tests business requirement: "Parser reports all errors at once"
+@Test
+public void parseInvalidTomlShowsAllErrors()
+{
+  ConfigParseException e = assertThrows(() -> parser.parse(invalidTomlPath));
+  requireThat(e.getErrors(), "errors").isNotEmpty();
+  requireThat(e.getErrors().size(), "error count").isGreaterThan(1);
+}
+```
+
+**Bad (implementation details):**
+```java
+// Don't test how the code works internally
+@Test
+public void parserCallsJacksonReadValue()
+{
+  verify(mockMapper).readValue(any(), eq(BillConfig.class)); // Brittle
+}
+
+@Test
+public void parserSetsFieldsInCorrectOrder()
+{
+  // Testing internal sequencing, not requirements
+  InOrder order = inOrder(config);
+  order.verify(config).setName(any());
+  order.verify(config).setVersion(any());
+}
+```
+
+**Coverage Metrics:**
+- **Target:** 100% business requirements coverage (every requirement has tests)
+- **Not a target:** 100% line/branch coverage (useful signal, but not the goal)
+- **Philosophy:** If a business requirement exists, it must have tests. If code has no tests, question if it's a real requirement.
+
+**Rationale:**
+- Tests that verify business requirements survive refactoring and provide long-term value
+- Tests of implementation details break when you change how code works (even when behavior is correct)
+- Requirements-focused tests serve as living documentation of what the system does
+- Implementation-detail tests create maintenance burden without safety benefit
+
 ## Documentation
 
 ### Package Documentation
