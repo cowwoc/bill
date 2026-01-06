@@ -49,7 +49,13 @@ mvn clean verify
 
 ## License
 
-TBD
+Bill is available under a custom license:
+- **Personal use:** Free and open source
+- **Commercial use:** Requires a paid license
+
+See [LICENSE](LICENSE) for full terms.
+
+For commercial licensing inquiries, contact: cowwoc2020@gmail.com
 
 ## Contributing
 
