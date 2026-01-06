@@ -61,6 +61,30 @@ Comments should focus on what the code does, not redundantly mention the project
 
 **Rationale:** Readers already know which project the source code belongs to. Comments should provide useful information about the code's purpose or behavior.
 
+### Avoid Retrospective/Timeline Comments
+
+Comments should describe the current state of the code, not reference when features will be or were implemented.
+
+**Good:**
+```java
+/**
+ * TOML parser for bill.toml configuration files.
+ */
+package io.github.cowwoc.bill.toml;
+```
+
+**Bad:**
+```java
+/**
+ * TOML parser for bill.toml configuration files.
+ * <p>
+ * Implementation in Phase 2.
+ */
+package io.github.cowwoc.bill.toml;
+```
+
+**Rationale:** Timeline comments become dated immediately and don't reflect the current state of the code. Comments should be timeless and describe what the code does, not when it was or will be implemented.
+
 ## Project Structure
 
 ### Module Naming
