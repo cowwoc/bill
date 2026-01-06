@@ -125,6 +125,57 @@ Use `maven.compiler.release` instead of separate `maven.compiler.source` and `ma
 
 **Rationale:** `maven.compiler.release` ensures consistent compilation for the target JDK version and is the recommended modern approach.
 
+### Dependency Version Management
+
+All dependency versions (both external and internal/inter-module) must be defined in the root `pom.xml` in the `<dependencyManagement>` section. Child module POMs should never specify versions.
+
+**Good (root pom.xml):**
+```xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>7.10.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.cowwoc.bill</groupId>
+      <artifactId>core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+```
+
+**Good (child module pom.xml):**
+```xml
+<dependencies>
+  <dependency>
+    <groupId>io.github.cowwoc.bill</groupId>
+    <artifactId>core</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>org.testng</groupId>
+    <artifactId>testng</artifactId>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
+```
+
+**Bad (child module with versions):**
+```xml
+<dependencies>
+  <dependency>
+    <groupId>io.github.cowwoc.bill</groupId>
+    <artifactId>core</artifactId>
+    <version>${project.version}</version>  <!-- Version should be in parent -->
+  </dependency>
+</dependencies>
+```
+
+**Rationale:** Centralizing all dependency versions in the root POM ensures consistency across modules, simplifies version updates, and follows Maven best practices.
+
 ## Git Commits
 
 ### Commit Message Format
