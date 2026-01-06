@@ -102,6 +102,24 @@ Module directories and artifactIds use simple names without the "bill-" prefix.
 
 **Rationale:** The parent POM groupId already identifies these as Bill modules. Shorter names are cleaner.
 
+### Package Naming for Tests
+
+Test packages must have unique names by appending `.test` to the main module's package name.
+
+**Good:**
+- Main module: `package io.github.cowwoc.bill.core;`
+- Test module: `package io.github.cowwoc.bill.core.test;`
+
+**Good:**
+- Main module: `package io.github.cowwoc.bill.toml;`
+- Test module: `package io.github.cowwoc.bill.toml.test;`
+
+**Bad:**
+- Main module: `package io.github.cowwoc.bill.core;`
+- Test module: `package io.github.cowwoc.bill.core;` ❌ Same as main
+
+**Rationale:** Unique package names prevent naming conflicts and make it clear which code is production vs. test code. This follows the convention that test packages should be distinct from their corresponding main packages.
+
 ## Build Configuration
 
 ### Java Compiler Settings
