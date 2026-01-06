@@ -1,0 +1,64 @@
+name: Claude Issue Deduplication
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  deduplicate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check for duplicate issues
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Analyze this new issue and check if it's a duplicate of existing issues in the repository.
+
+            REPO: ${{ github.repository }}
+            ISSUE NUMBER: ${{ github.event.issue.number }}
+
+            Your task:
+            1. Get details of the current issue using `gh issue view ${{ github.event.issue.number }}`
+            2. Search for similar existing issues using `gh issue list --search "<keywords>"`
+            3. Compare the new issue with existing ones to identify potential duplicates
+
+            Criteria for duplicates:
+            - Same bug or error being reported
+            - Same feature request (even if worded differently)
+            - Same question being asked
+            - Issues describing the same root problem
+
+            If you find duplicates:
+            - Add a comment on the new issue linking to the original issue(s) using:
+              `gh issue comment ${{ github.event.issue.number }} --body "message"`
+            - Apply a "duplicate" label using:
+              `gh issue edit ${{ github.event.issue.number }} --add-label "duplicate"`
+            - Be polite and explain why it's a duplicate
+            - Suggest the user follow the original issue for updates
+
+            If it's NOT a duplicate:
+            - Don't add any comments
+            - You may apply appropriate topic labels based on the issue content
+
+            Use these GitHub CLI commands:
+            - `gh issue view <number>` - Get issue details
+            - `gh issue list --search "<query>"` - Search for similar issues
+            - `gh issue comment <number> --body "text"` - Add a comment
+            - `gh issue edit <number> --add-label "label"` - Add labels
+
+            Be thorough but efficient. Focus on finding true duplicates, not just similar issues.
+
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_non_write_users: "cowwoc"
+          claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh search:*)"'
