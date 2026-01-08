@@ -1,4 +1,4 @@
 /**
- * TOML parser for bill.toml configuration files.
+ * Tests for TOML parser.
  */
-package io.github.cowwoc.bill.toml;
+package io.github.cowwoc.bill.toml.test;
